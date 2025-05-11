@@ -16,7 +16,7 @@ pipeline {
 
           // 3) Echo the monster map in one go
           //    Jenkins will truncate the line somewhere after ~1 KB
-          echo asMap.toString()
+echo "${asMap}"
         }
       }
     }
