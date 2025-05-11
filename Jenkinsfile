@@ -1,23 +1,14 @@
 pipeline {
   agent any
+
   stages {
-    stage('Prep') {
+    stage('Repro Groovy Stringification') {
       steps {
-        // Create a sample JSON so readJSON can find it
-        writeFile file: 'unittest-report.json', text: '''{
-          "numTotalTests": 3,
-          "numFailedTestSuites": 1,
-          "testResults": []
-        }'''
-      }
-    }
-    stage('Debug JSON') {
-      steps {
+        // Parse the JSON
         script {
           def unitTestData = readJSON file: 'unittest-report.json'
-          echo "unitTestData class: ${unitTestData.getClass()}"
-          echo "numTotalTests: ${unitTestData.numTotalTests}"
-          // …etc…
+          // This will print only the first entry, e.g. "[numFailedTestSuites:1]"
+          echo "unitTestData: ${unitTestData}"
         }
       }
     }
