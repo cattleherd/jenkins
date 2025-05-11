@@ -1,27 +1,21 @@
 pipeline {
   agent any
-
   stages {
-    stage('Generate Huge JSON') {
+    stage('Debug JSON') {
       steps {
+        // Read in your file
         script {
-          // Build a map with lots of keys so JSON-lib will truncate its toString()
-          def big = [:]
-          (1..50).each { i -> big["field${i}"] = "value${i}" }
-          writeFile file: 'unittest-report.json',
-                    text: groovy.json.JsonOutput.toJson(big)
-        }
-      }
-    }
+          def data = readJSON file: 'unittest-report.json'
 
-    stage('Reproduce Stringification Mishap') {
-      steps {
-        script {
-          // Parse via Pipeline Utility Steps
-          def unitTestData = readJSON file: 'unittest-report.json'
+          // 1️⃣ Show the class
+          echo "Data class: ${data.getClass()}"
 
-          // This will invoke JSONObject.toString(), which truncates
-          echo "unitTestData: ${unitTestData}"
+          // 2️⃣ Access key fields
+          echo "Total tests        : ${data.numTotalTests}"
+          echo "Failed test suites : ${data.numFailedTestSuites}"
+
+          // 3️⃣ Show all top-level keys (if you need to see what’s in there)
+          echo "All keys: ${data.keySet()}"
         }
       }
     }
