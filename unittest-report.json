@@ -1,0 +1,10 @@
+{
+    "numTotalTests": 3,
+    "numFailedTestSuites": 1,
+    "testResults": [
+      { "suiteName": "alpha.test.ts", "status": "passed" },
+      { "suiteName": "beta.test.ts",  "status": "failed" },
+      { "suiteName": "gamma.test.ts", "status": "passed" }
+    ]
+  }
+  
