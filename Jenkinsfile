@@ -4,23 +4,19 @@ pipeline {
     stage('Verify Map Contents') {
       steps {
         script {
-          // 1) Read via Pipeline Utility (gives you JSONObject)
-          def jsonObj = readJSON file: 'unittest-report.json'
+          // 1) Read & parse as before
+          def text  = readFile('unittest-report.json')
+          def asMap = new groovy.json.JsonSlurper().parseText(text)
 
-          // 2) Read raw text + parse via JsonSlurper (gives you LinkedHashMap)
-          def text    = readFile('unittest-report.json')
-          def asMap   = new groovy.json.JsonSlurper().parseText(text)
+          // 2) Add 100 dummy keys to blow past Jenkins's line‐length cutoff
+          (1..100).each { i ->
+            // each value is a 50-character string
+            asMap["dummyKey${i}"] = "x".multiply(50)
+          }
 
-          // 3) Show how each prints
-          echo "---- JSONObject.toString() preview ----"
-          echo jsonObj.toString()                
-
-          echo "---- LinkedHashMap.toString() preview ----"
-          echo asMap.toString()                 
-
-          // 4) Show the actual number of keys and list them
-          echo "Map has ${asMap.size()} top-level keys"
-          echo "Keys: ${asMap.keySet()}"
+          // 3) Echo the monster map in one go
+          //    Jenkins will truncate the line somewhere after ~1 KB
+          echo asMap.toString()
         }
       }
     }
